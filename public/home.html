@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .weather-container {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        h2 {
+            color: #444;
+            font-weight: bold;
+        }
+        label {
+            font-weight: bold;
+            color: #666;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            border: 2px solid #ff758c;
+            border-radius: 8px;
+            outline: none;
+        }
+        button {
+            background: #ff758c;
+            color: wheat;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #e84372;
+        }
+        #weather-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        a {
+            color: #ff758c;
+            font-weight: bold;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-container" id="weather-app">
+        <h2>Weather in Your City</h2>
+        <label for="city-input">Enter City:</label>
+        <input type="text" id="city-input"><br><br>
+        <button onclick="getWeather()">Weather Update</button>
+        <div id="weather-result"></div>
+        <button onclick="logout()">Logout</button>
+    </div>
+    <script>
+        const weatherResultDiv = document.getElementById('weather-result');
+        async function getWeather() {
+            const city = document.getElementById('city-input').value;
+            if (!city) {
+                alert('Please enter a city.');
+                return;
+            }
+            try {
+                const response = await fetch(`/weather/${city}`);
+                const data = await response.json();
+                if (response.ok) {
+                    const weatherInfo = `
+                        <h3>Weather in ${data.name}, ${data.sys.country}</h3>
+                        <p>Temperature: ${data.main.temp}°C</p>
+                        <p>Description: ${data.weather[0].description}</p>
+                        <p>Humidity: ${data.main.humidity}%</p>
+                    `;
+                    weatherResultDiv.innerHTML = weatherInfo;
+                } else {
+                    weatherResultDiv.innerHTML = `<p>Error in 12fetching weather: ${data.error}</p>`;
+                }
+            } catch (error) {
+                console.error('Error fetching weather:', error);
+                weatherResultDiv.innerHTML = '<p>Sorry, An error occurred while fetching weather data.</p>';
+            }
+        }
+        function logout() {
+            alert('Logged out.');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>
